@@ -1,32 +1,45 @@
 <template>
   <div id="app">
-    <nav>
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </nav>
-    <router-view/>
+    <div class="blogContainer">
+      <router-view/>
+    </div>
+    <div class="backGround"></div>
   </div>
 </template>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
+<style lang="less">
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
-
-nav {
-  padding: 30px;
+#app{
+  padding: 50px 0px;
+  .blogContainer{
+    z-index: 999;
+    background-color:rgba(0,0,0,0.2);
+    margin: 0px auto;
+    width: 75%;
+    .navbar{
+      display: flex;
+      font-size: 23px;
+      div{
+        margin-left: 20px;
+      }
+    }
+  }
 }
-
-nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
-
-nav a.router-link-exact-active {
-  color: #42b983;
+//背景图片
+.backGround{
+  z-index: -999;
+  position:fixed;
+  left: 0;
+  top: 0;
+  height: 100vh;
+  background: #000;
+  width: 100%;
+  background: url('https://img0.baidu.com/it/u=3415031676,1265821426&fm=253&fmt=auto&app=120&f=JPEG?w=1422&h=800') no-repeat;
+  background-size: cover;
+  background-attachment:fixed;
 }
 </style>
