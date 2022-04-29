@@ -2,29 +2,30 @@
   <div class="home">
       <!-- 左边博客信息 -->
       <div class="leftContent">
-        <el-card class="box-card" v-for="item in 8" :key="item">
+        <el-card class="box-card" v-for="item in blogInfoList" :key="item.blogCreateTime">
           <div class="blogImg">
-            <img :src="blogInfo.imgurl" alt="图片加载失败">
+            <img :src="item.blogImgUrl" alt="图片加载失败">
           </div>
           <div class="contentDiv">
             <div class="typeTitle">
               <!-- 分类标签 -->
-              <el-tag>{{blogInfo.type}}</el-tag>
+              <el-tag v-text="item.blogType.blogTypename"></el-tag>
               <!-- 时间+文章 -->
-              <h4 class="title">{{blogInfo.createTime+":"+blogInfo.title}}</h4>
+              <h4 class="title">{{item.blogCreateTime+":"+item.blogTitle}}</h4>
             </div>
             <hr>
             <!-- 内容 -->
-            <div class="context" v-html="blogInfo.content">
+            <div class="context" :v-html="item.blogContent">
             </div>
           </div>
         </el-card>
         <!-- 分页组件 -->
         <div class="pageTemp">
           <el-pagination
+          @current-change="currentPage"
             background
             layout="prev, pager, next"
-            :total="1000" @click="val(v)">
+            :total="pageSize*11" >
         </el-pagination>
         </div>
       </div>
@@ -46,25 +47,45 @@ export default {
   name: 'HomeView',
   data() {
     return {
-      blogInfo:{
-        title:"测试标题测试标题测试标题测试标题测试标题测试标题测试标题测试标题测试标题测试标题测试标题测试标题测试标题测试标题测试标题测试标题测试标题测试标题测试标题测试标题测试标题测试标题",
-        content:`我就是内容测试标题测试标题测试标题测试标题测试标题测试标题测试标题测试标题测试标题我就是内容测试标题测试标题测试标题测试标题测试标题测试标题测试标题测试标题测试标题
-        我就是内容测试标题测试标题测试标题测试标题测试标题测试标题测试标题测试标题测试标题
-        我就是内容测试标题测试标题测试标题测试标题测试标题测试标题测试标题测试标题测试标题
-        我就是内容测试标题测试标题测试标题测试标题测试标题测试标题测试标题测试标题测试标题`,
-        imgurl:'https://hjy-1309140759.cos.ap-guangzhou.myqcloud.com/hjye0e1e6ca-fe8c-4101-bd24-1cb2f8ef9c91.jpg',
-        type:'SpringCloud',
-        createTime:'2022年4月27号'
-      }
+      pageSize:1,
+      blogInfoList:[]
     }
   },
   components: {
     Calender
   },
   methods: {
-    val(v){
-      console.log(v);
+    // 分页
+    async currentPage(index){
+      var i =await this.$ajaxPost(`/blog/${index}`)
+      if(i.message){
+        this.$message.error('请求出错了')
+      }
+      this.blogInfoList=i.data.data.records
+      this.pageSize=i.data.data.pages;
+    },  
+   formatDate(time){
+      var date = new Date(time);
+      var year = date.getFullYear(),
+          month = date.getMonth() + 1,//月份是从0开始的
+          day = date.getDate(),
+          hour = date.getHours(),
+          min = date.getMinutes(),
+          sec = date.getSeconds();
+      var newTime = year + '-' +
+          month + '-' +
+          day + ' ' +
+          hour + ':' +
+          min + ':' +
+          sec;
+        return newTime;
     }
+    // 查询数据
+  },
+  mounted() {
+    //默认加载分页查询为1
+    this.currentPage(0)
+    // console.log(this.formatDate(1651207502000));
   },
 }
 </script>
@@ -80,7 +101,7 @@ export default {
     //博客信息卡片
     .box-card{
       border: #409EFF solid 1px;
-      width: 85%;
+      width: 660px;
       height: 200px;
       margin: 30px auto;
       display: flex;
@@ -151,8 +172,6 @@ export default {
   .rightInfo{
     margin-top: 30px;
     width: 30%;
-    height: 800px;
-    border: 1px red solid;
     // 日历组件
     .Calender{
       width: 100%;
